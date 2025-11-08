@@ -81,6 +81,21 @@ let messages = [];
 app.use(cors());
 app.use(express.json());
 
+// Корневой endpoint
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Anongram Server is running!',
+    version: '1.0.0',
+    endpoints: [
+      'POST /api/send-code',
+      'POST /api/verify-code', 
+      'GET /api/users',
+      'GET /api/messages/:userId1/:userId2',
+      'WebSocket /ws'
+    ]
+  });
+});
+
 // API Routes
 app.post('/api/send-code', (req, res) => {
   const { email } = req.body;
