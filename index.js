@@ -8,9 +8,9 @@ const app = express();
 const server = createServer(app);
 const wss = new WebSocketServer({ server, path: '/ws' });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
-// Храним данные в памяти (для демо)
+// Храним данные в памяти
 let users = [
   { 
     id: 1, 
@@ -82,7 +82,7 @@ app.use(cors());
 app.use(express.json());
 
 // API Routes
-app.post('/api/send-code', async (req, res) => {
+app.post('/api/send-code', (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: 'Email обязателен' });
 
@@ -96,7 +96,7 @@ app.post('/api/send-code', async (req, res) => {
   res.json({ success: true, message: 'Код отправлен', code: code });
 });
 
-app.post('/api/verify-code', async (req, res) => {
+app.post('/api/verify-code', (req, res) => {
   const { email, code } = req.body;
   if (!email || !code) return res.status(400).json({ error: 'Email и код обязательны' });
 
@@ -140,7 +140,7 @@ app.post('/api/verify-code', async (req, res) => {
   });
 });
 
-app.get('/api/users', async (req, res) => {
+app.get('/api/users', (req, res) => {
   const safeUsers = users.map(user => ({
     id: user.id,
     username: user.username,
@@ -152,7 +152,7 @@ app.get('/api/users', async (req, res) => {
   res.json(safeUsers);
 });
 
-app.get('/api/messages/:userId1/:userId2', async (req, res) => {
+app.get('/api/messages/:userId1/:userId2', (req, res) => {
   const { userId1, userId2 } = req.params;
   
   const chatMessages = messages.filter(msg => 
@@ -171,7 +171,7 @@ wss.on('connection', (ws) => {
   clients.set(clientId, ws);
   console.log(`Новое соединение: ${clientId}`);
 
-  ws.on('message', async (data) => {
+  ws.on('message', (data) => {
     try {
       const message = JSON.parse(data.toString());
       if (message.type === 'chat_message') {
